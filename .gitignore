@@ -5,3 +5,7 @@ json*
 plots/
 summary/
 *_old*
+resources/credentials.json
+
+!resources/credentials_template.json
+!resources/flags.json
