@@ -35,12 +35,21 @@ if __name__ == '__main__':
         '--skip-nlp', type=bool, default=False,
         help='Skip NLP and only do speech to text'
     )
+    parser.add_argument(
+        '--credentials', type=str, default='resources/credentials.json',
+        help='Credentials for IBM Watson services'
+    )
 
     args = parser.parse_args()
     input_file = args.path
     flags_file = args.flags
     log_file = args.log
     skip_nlp = args.skip_nlp
+    cred_file = args.credentials
+
+    creds = json.load(open(cred_file))
+    tts_c = creds['tts']
+    nlp_c = creds['nlp']
 
     flags = json.load(open(flags_file))
     if log_file == None:
@@ -49,8 +58,8 @@ if __name__ == '__main__':
         print('INFO: logging to %s\n' % log_file)
 
     speech_engine = stt(
-        'b957a8f7-cc9f-408d-a8a5-46a486be371e',
-        'CzrwFjQD6ofa',
+        tts_c['username'],
+        tts_c['password'],
         log_file=log_file
     )
     if input_file.endswith('.flac'):
@@ -73,9 +82,8 @@ if __name__ == '__main__':
         log_nlp = None
 
     nlp_engine = nlp(
-        '30c38aa5-66aa-4f3a-93b1-11f2d32c39b9',
-        'c0ddm1bOKzZr',
-        flags,
+        nlp_c['username']
+        nlp_c['password'],
         log_file=log_nlp
     )
 

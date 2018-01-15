@@ -1,5 +1,6 @@
 import textwrap
 import argparse
+import soundfile as sf
 
 from speech_to_text import speech_to_text as stt
 from natural_language_processing import natural_language_processing as nlp
@@ -24,20 +25,29 @@ if __name__ == '__main__':
         '--outdir', type=str, default='plots/',
         help='If provided, path to directory to save the plot'
     )
+    parser.add_argument(
+        '--credentials', type=str, default='resources/credentials.json',
+        help='Credentials for IBM Watson services'
+    )
 
     args = parser.parse_args()
     conv_file = args.transcript
     nlp_file = args.sentiment
     out_dir = args.outdir
+    cred_file = args.credentials
+
+    creds = json.load(open(cred_file))
+    tts_c = creds['tts']
+    nlp_c = creds['nlp']
 
     speech_engine = stt(
-        'b957a8f7-cc9f-408d-a8a5-46a486be371e',
-        'CzrwFjQD6ofa'
+        tts_c['username'],
+        tts_c['password']
     )
 
     dialogue = speech_engine.load_json(conv_file)
 
-    _, targets = nlp.load_json(nlp_file)
+    avg, targets = nlp.load_json(nlp_file)
 
     hist = []
     labels = []
@@ -45,19 +55,15 @@ if __name__ == '__main__':
     dots = []
 
     for sentence in dialogue:
+        found = False
         ts = sentence['timestamp']
         speaker = sentence['speaker']
         sentence = sentence['sentence']
         # labels[-1] = ts
-        for unit in targets:
+        for i in range(len(targets) - 1, -1, -1):
+            unit = targets[i]
             target = unit['text']
-            search = sentence.find(target)
-            if search == -1:
-                for i in range(len(sentence.split(' '))//2):
-                    hist.append(0)
-                    labels.append('')
-                    speakers.append(speaker)
-            else:
+            if target in sentence:
                 hist.append(unit['score'])
                 speakers.append(speaker)
                 label = str(ts) + '\n' + target + '\nspeaker:' + str(speaker)
@@ -65,14 +71,20 @@ if __name__ == '__main__':
                 hist.extend([0] * 10)
                 speakers.extend([speaker] * 10)
                 labels.extend([''] * 10)
-                targets.remove(unit)
+                del targets[i]
+                sentence = sentence.replace(target, '', 1)
+                found = True
+        if not found:
+            for i in range(len(sentence.split(' '))//2):
+                hist.append(0)
+                labels.append('')
+                speakers.append(speaker)
 
     labels[-1] = ts
 
     for i in range(len(hist)):
         if hist[i] == 0 and labels[i] != '':
             dots.append(i)
-
 
     x = np.arange(len(labels))
     y = hist
@@ -81,6 +93,7 @@ if __name__ == '__main__':
     ax.set_autoscale_on(False)
     plt.ylim(-1, 1)
     ax.axhline(color='black')
+    ax.axhline(y=avg, color='red', linestyle='dashed')
     ax.set(xlabel='Keyword and sentence starting time', ylabel='Sentiment')
     ax.set_xticklabels(labels[:-1], fontsize=15)
     for dot in dots:

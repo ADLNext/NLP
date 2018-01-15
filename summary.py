@@ -21,15 +21,24 @@ if __name__ == '__main__':
         '--outfile', type=str, default=None,
         help='If provided, the output is also saved on this file'
     )
+    parser.add_argument(
+        '--credentials', type=str, default='resources/credentials.json',
+        help='Credentials for IBM Watson services'
+    )
 
     args = parser.parse_args()
     stt_file = args.speech_to_text
     nlp_file = args.natural_language
     outfile = args.outfile
+    cred_file = args.credentials
+
+    creds = json.load(open(cred_file))
+    tts_c = creds['tts']
+    nlp_c = creds['nlp']
 
     speech_engine = stt(
-        'b957a8f7-cc9f-408d-a8a5-46a486be371e',
-        'CzrwFjQD6ofa',
+        tts_c['username'],
+        tts_c['password']
     )
 
     dialogue = speech_engine.load_json(stt_file)
