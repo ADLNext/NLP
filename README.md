@@ -17,7 +17,7 @@ python main.py logs/tts.json --log logs/nlp.json
 It is then possible to either create the "manhattan plot" for the conversation or to generate a summary of the operations:
 
 ```
-python plot.py logs/003_tts.json logs/003_nlp_snt.json
+python plot.py logs/tts.json logs/nlp.json
 ```
 
 ```
