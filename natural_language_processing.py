@@ -48,7 +48,10 @@ class natural_language_processing:
                 found += 1
             except KeyError:
                 print('INFO: no target found in sentence')
-        doc_score /= found
+        if found == 0:
+            doc_score = 0
+        else:
+            doc_score /= found
 
         json_out = {
             'sentiment':{
