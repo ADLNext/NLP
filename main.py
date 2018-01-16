@@ -82,9 +82,10 @@ if __name__ == '__main__':
         log_nlp = None
 
     nlp_engine = nlp(
-        nlp_c['username']
+        nlp_c['username'],
         nlp_c['password'],
-        log_file=log_nlp
+        log_file=log_nlp,
+        flags=flags
     )
 
     nlp_engine.process_batch(dialogue)

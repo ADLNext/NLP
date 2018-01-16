@@ -1,3 +1,4 @@
+import json
 import textwrap
 import argparse
 import soundfile as sf
@@ -58,6 +59,7 @@ if __name__ == '__main__':
         found = False
         ts = sentence['timestamp']
         speaker = sentence['speaker']
+        conf = sentence['confidence']
         sentence = sentence['sentence']
         # labels[-1] = ts
         for i in range(len(targets) - 1, -1, -1):
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     plt.ylim(-1, 1)
     ax.axhline(color='black')
     ax.axhline(y=avg, color='red', linestyle='dashed')
-    ax.set(xlabel='Keyword and sentence starting time', ylabel='Sentiment')
+    ax.set(xlabel='Keywords and key attributes', ylabel='Sentiment')
     ax.set_xticklabels(labels[:-1], fontsize=15)
     for dot in dots:
         ax.plot(dot, 0, 'o', c='black')

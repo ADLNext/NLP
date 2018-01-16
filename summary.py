@@ -1,3 +1,4 @@
+import json
 import textwrap
 import argparse
 
@@ -45,9 +46,19 @@ if __name__ == '__main__':
 
     score, targets = nlp.load_json(nlp_file)
 
-    for unit in dialogue:
-        print(str(unit['speaker']) + ' [' + str(unit['timestamp']) + ']: ' + unit['sentence'])
+    total_conf = 0
+    n_words = 0
 
+    for unit in dialogue:
+        # remove confidence
+        print(str(unit['speaker']) + ' [' + str(unit['timestamp']) + ']: ' + unit['sentence'])
+        total_conf += unit['confidence']
+        n_words += len(unit['sentence'].split(' '))
+
+    total_conf /= len(dialogue)
+
+    print('Transcribed words: %d' % n_words)
+    # print('Transcription accuracy: %f' % (1 - total_conf))
     print('Conversation sentiment score: %f' % score)
 
     for target in targets:
@@ -57,7 +68,7 @@ if __name__ == '__main__':
         print('INFO: logging to %s' % outfile)
         with open(outfile, 'w') as f:
             for unit in dialogue:
-                f.write(str(unit['speaker']) + ' [' + str(unit['timestamp']) + ']: ' + unit['sentence'] + '\n')
+                f.write(str(unit['speaker']) + ' [' + str(unit['timestamp']) + '](' + str(1 - unit['confidence']) + '): ' + unit['sentence'] + '\n')
             f.write('Conversation sentiment score: %f\n' % score)
             for target in targets:
                 f.write('%s: %f\n' % (target['text'], target['score']))
