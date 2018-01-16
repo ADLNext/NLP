@@ -39,7 +39,6 @@ if __name__ == '__main__':
 
     creds = json.load(open(cred_file))
     tts_c = creds['tts']
-    nlp_c = creds['nlp']
 
     speech_engine = stt(
         tts_c['username'],
@@ -63,7 +62,8 @@ if __name__ == '__main__':
         sentence = sentence['sentence']
         # labels[-1] = ts
         for i in range(len(targets) - 1, -1, -1):
-            unit = targets[i]
+            index = len(targets) - (i + 1)
+            unit = targets[index]
             target = unit['text']
             if target in sentence:
                 hist.append(unit['score'])
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                 hist.extend([0] * 10)
                 speakers.extend([speaker] * 10)
                 labels.extend([''] * 10)
-                del targets[i]
+                del targets[index]
                 sentence = sentence.replace(target, '', 1)
                 found = True
         if not found:

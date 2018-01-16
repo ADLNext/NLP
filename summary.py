@@ -68,7 +68,7 @@ if __name__ == '__main__':
         print('INFO: logging to %s' % outfile)
         with open(outfile, 'w') as f:
             for unit in dialogue:
-                f.write(str(unit['speaker']) + ' [' + str(unit['timestamp']) + '](' + str(1 - unit['confidence']) + '): ' + unit['sentence'] + '\n')
+                f.write(str(unit['speaker']) + ' [' + str(unit['timestamp']) + ']: ' + unit['sentence'] + '\n')
             f.write('Conversation sentiment score: %f\n' % score)
             for target in targets:
                 f.write('%s: %f\n' % (target['text'], target['score']))
