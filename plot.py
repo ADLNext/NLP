@@ -1,7 +1,6 @@
 import json
 import textwrap
 import argparse
-import soundfile as sf
 
 from speech_to_text import speech_to_text as stt
 from natural_language_processing import natural_language_processing as nlp
