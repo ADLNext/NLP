@@ -58,7 +58,7 @@ if __name__ == '__main__':
     total_conf /= len(dialogue)
 
     print('Transcribed words: %d' % n_words)
-    # print('Transcription accuracy: %f' % (1 - total_conf))
+    print('Transcription confidence: %f' % (1 - total_conf))
     print('Conversation sentiment score: %f' % score)
 
     for target in targets:
